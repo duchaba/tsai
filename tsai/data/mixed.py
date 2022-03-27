@@ -3,15 +3,16 @@
 __all__ = ['MixedDataLoader', 'MixedDataLoaders', 'get_mixed_dls']
 
 # Cell
+from packaging import version
+from torch.utils.data.dataloader import _MultiProcessingDataLoaderIter, _SingleProcessDataLoaderIter, _DatasetKind
+from fastai.data.load import _FakeLoader
+from fastai.tabular.core import *
 from ..imports import *
 
 # Cell
 # This implementation of a mixed dataloader is based on a great implementation created by Zach Mueller in this fastai thread:
 # https://forums.fast.ai/t/combining-tabular-images-in-fastai2-and-should-work-with-almost-any-other-type/73197
 
-from packaging import version
-from fastai.data.load import _FakeLoader
-from torch.utils.data.dataloader import _MultiProcessingDataLoaderIter, _SingleProcessDataLoaderIter, _DatasetKind
 _loaders = (_MultiProcessingDataLoaderIter, _SingleProcessDataLoaderIter)
 
 
@@ -22,6 +23,7 @@ class MixedDataLoader():
         device = ifnone(device, default_device())
         self.device = device
         self.c = None
+        self.d = None
         self.bs = ifnone(bs, min([dl.bs for dl in loaders]))
         for i, dl in enumerate(loaders):  # ensure all dls have the same bs
             if hasattr(dl, 'vars'):
@@ -34,6 +36,8 @@ class MixedDataLoader():
             dl.shuffle_fn = self.shuffle_fn
             if self.c is None and hasattr(dl, "c"):
                 self.c = dl.c
+            if self.d is None and hasattr(dl, "d"):
+                self.d = dl.d
             if i == 0:
                 self.dataset = dl.dataset
             dl.to(device=device)
@@ -93,7 +97,9 @@ class MixedDataLoader():
                 outs += batch[dl.n_inp:]
             inps = tuple([tuple(L(inps)[idx]) if isinstance(idx, list) else inps[idx]
                           for idx in self.x_idxs]) if len(self.x_idxs) > 1 else tuple(L(outs)[self.x_idxs][0])
-            outs = tuple(L(outs)[self.y_idxs]) if len(self.y_idxs) > 1 else L(outs)[self.y_idxs][0]
+            if len(self.y_idxs) == 0: # based on issue identified by @Wabinab https://github.com/timeseriesAI/tsai/pull/229
+                yield tuple((inps,))
+            outs =  tuple(L(outs)[self.y_idxs]) if len(self.y_idxs) > 1 else L(outs)[self.y_idxs][0]
             yield inps, outs
 
     def one_batch(self):

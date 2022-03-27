@@ -5,6 +5,9 @@ from .data.all import *
 from .losses import *
 from .metrics import *
 from .learner import *
+from .inference import *
+from .analysis import *
+from .calibration import *
 from .tslearner import *
 from .optimizer import *
 from .models.all import *

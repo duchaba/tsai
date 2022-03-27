@@ -26,31 +26,6 @@ nb_path: "nbs/017_data.transforms.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/Users/nacho/opt/anaconda3/envs/py37/lib/python3.7/site-packages/pandas/core/series.py:1056: SettingWithCopyWarning: 
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  cacher_needs_updating = self._check_is_chained_assignment_possible()
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 </div>
     {% endraw %}
 
@@ -68,9 +43,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dsid</span> <span class="o">=</span> <span class="s1">&#39;NATOPS&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">tsai.data.core</span> <span class="kn">import</span> <span class="n">TSCategorize</span>
+<span class="kn">from</span> <span class="nn">tsai.data.external</span> <span class="kn">import</span> <span class="n">get_UCR_data</span>
+<span class="kn">from</span> <span class="nn">tsai.data.preprocessing</span> <span class="kn">import</span> <span class="n">TSStandardize</span>
+<span class="n">dsid</span> <span class="o">=</span> <span class="s1">&#39;NATOPS&#39;</span>
 <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">splits</span> <span class="o">=</span> <span class="n">get_UCR_data</span><span class="p">(</span><span class="n">dsid</span><span class="p">,</span> <span class="n">return_split</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">tfms</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Categorize</span><span class="p">()]</span>
+<span class="n">tfms</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">TSCategorize</span><span class="p">()]</span>
 <span class="n">batch_tfms</span> <span class="o">=</span> <span class="n">TSStandardize</span><span class="p">()</span>
 <span class="n">dls</span> <span class="o">=</span> <span class="n">get_ts_dls</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">tfms</span><span class="o">=</span><span class="n">tfms</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">,</span> <span class="n">batch_tfms</span><span class="o">=</span><span class="n">batch_tfms</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
 <span class="n">xb</span><span class="p">,</span> <span class="n">yb</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">train</span><span class="p">))</span>
@@ -94,7 +72,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSIdentity" class="doc_header"><code>class</code> <code>TSIdentity</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L29" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSIdentity</code>(<strong><code>magnitude</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSIdentity" class="doc_header"><code>class</code> <code>TSIdentity</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L24" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSIdentity</code>(<strong><code>magnitude</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies the identity tfm to a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch</p>
 
@@ -143,7 +121,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSShuffle_HLs" class="doc_header"><code>class</code> <code>TSShuffle_HLs</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L39" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSShuffle_HLs</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSShuffle_HLs" class="doc_header"><code>class</code> <code>TSShuffle_HLs</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L34" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSShuffle_HLs</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly shuffles HIs/LOs of an OHLC <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch</p>
 
@@ -192,7 +170,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSShuffleSteps" class="doc_header"><code>class</code> <code>TSShuffleSteps</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L61" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSShuffleSteps</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSShuffleSteps" class="doc_header"><code>class</code> <code>TSShuffleSteps</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L56" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSShuffleSteps</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly shuffles consecutive sequence datapoints in batch</p>
 
@@ -243,7 +221,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_png output_subarea ">
-<img src="data:image/png;base64,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ZLl/6lhtba2efvppuVwuTU1N6dSpU7pw4YLd21p0q1at0gsvvKDOzk6FQiG7t7OoVq9erT179sjn82lmZkanT5/WmTNn7N7WomloaNAPfvADrVmzRp9//rneeecdXbp0ye5tLYp9+/bpk08+0dmzZyUtjd5w5a/l/6lj5eXl2r9/v95//30dPHhQx48f17PPPiuPx2P31hbd7t27dd9999m9jYJoaWlRJBLR888/r87OTu3YsUNut9vubS0Kl8ulQCCgzs5O/fSnP9WpU6e0f/9+lZaW2r21/8mmTZv0zDPPaMuWLam1pdIb4q/l/6ljjzzyiK5evapz585pdnZWly5d0pUrV7Rx40a7t7aonnjiCc3OzuqLL76weyuL7v7771dlZaXeffddXb9+XZcvX9ZLL72kRCJh99YWxfz8vG7evKmioiLNz9/6u9Pr16/flbdxL6QHH3xQJSUlmp6eTq0tld5w20eL96ljS9Xw8LA6OztTj8vLy1VVVbWsIrl27Vpt27ZNL7/8sg4fPmz3dhbdQw89pFgspr1796q2tlbJZFInT57U+Pi43VtbFLFYTL29vfrZz36WWvv973+vGzdu2Lir/11PT48kqbq6OrW2VHpD/CWVlZV95QrKsiw5nU6bdrS4EolE6vx8Pp/27NmjSCSigYEBm3e2ePbu3asTJ04smyvhL1u5cqU2bNigY8eO6dixY/L5fHruuef02WefLYtvAD6fT1u3btWvfvUrjY2NqaGhQbt27VIoFEq7al4OlkpvuO2jhX3q2L3G6XRq3759OnDggD788EP95je/Sf3v9b2usbFRMzMzunjxot1bKajx8XH19fXpxo0bCoVCGhwcXDa37r71rW/p4sWLGhkZ0ezsrM6cOaOpqSn5fD67t7bolkpvuPLX4n3q2FK1YsUKHTp0SNPT02pvb192H6izYcMGPfroozpy5IikW+d74MAB/eUvf9Gf/vQnm3e3OGKxmIqK0q/VioqKNDs7a9OOFte///1vlZSk52hubk7Xr1+3aUeFs1R6w5W/lv+njj322GMqKSnR66+/vmzO6b91dHToxz/+ceqfq1ev6re//e2yCb8kffzxx1q5cqUaGxtVUlKi2tpaPfzww/roo4/s3tqi+Oijj/Ttb39bPp9PJSUl2rJliyoqKu7qR7jeLUulN1z5a/l/6ti6devkdrv12muvpa0fPXpU58+ft2lXuBOWZenVV1/Vzp071dzcrMnJSb3xxhvL5pv5P/7xD7355pvatWuX1q5dqytXruh3v/vdsrzyXyq94f38AcBA3PYBAAMRfwAwEPEHAAMRfwAwEPEHAAMRfwAwEPEHAAMRfwAw0P8DxPd8DtnXHaIAAAAASUVORK5CYII=
+<img src="data:image/png;base64,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
 "
 >
 </div>
@@ -267,7 +245,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMagAddNoise" class="doc_header"><code>class</code> <code>TSMagAddNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L81" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagAddNoise</code>(<strong><code>magnitude</code></strong>=<em><code>1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMagAddNoise" class="doc_header"><code>class</code> <code>TSMagAddNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L76" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagAddNoise</code>(<strong><code>magnitude</code></strong>=<em><code>1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies additive noise on the y-axis for each step of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch</p>
 
@@ -292,7 +270,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMagMulNoise" class="doc_header"><code>class</code> <code>TSMagMulNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L94" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagMulNoise</code>(<strong><code>magnitude</code></strong>=<em><code>1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMagMulNoise" class="doc_header"><code>class</code> <code>TSMagMulNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L89" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagMulNoise</code>(<strong><code>magnitude</code></strong>=<em><code>1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies multiplicative noise on the y-axis for each step of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch</p>
 
@@ -344,7 +322,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="random_curve_generator" class="doc_header"><code>random_curve_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L108" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_curve_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>order</code></strong>=<em><code>4</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="random_curve_generator" class="doc_header"><code>random_curve_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L103" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_curve_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>order</code></strong>=<em><code>4</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -368,7 +346,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="random_cum_curve_generator" class="doc_header"><code>random_cum_curve_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L114" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_curve_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>order</code></strong>=<em><code>4</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="random_cum_curve_generator" class="doc_header"><code>random_cum_curve_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L109" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_curve_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>order</code></strong>=<em><code>4</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -392,7 +370,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="random_cum_noise_generator" class="doc_header"><code>random_cum_noise_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L121" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_noise_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="random_cum_noise_generator" class="doc_header"><code>random_cum_noise_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_noise_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>noise</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -416,7 +394,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="random_cum_linear_generator" class="doc_header"><code>random_cum_linear_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_linear_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>)</p>
+<h4 id="random_cum_linear_generator" class="doc_header"><code>random_cum_linear_generator</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L123" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>random_cum_linear_generator</code>(<strong><code>o</code></strong>, <strong><code>magnitude</code></strong>=<em><code>0.1</code></em>)</p>
 </blockquote>
 
 </div>
@@ -447,7 +425,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSTimeNoise" class="doc_header"><code>class</code> <code>TSTimeNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L145" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeNoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSTimeNoise" class="doc_header"><code>class</code> <code>TSTimeNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L140" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeNoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies noise to each step in the x-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on smooth random curve</p>
 
@@ -497,7 +475,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMagWarp" class="doc_header"><code>class</code> <code>TSMagWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L159" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ord</code></strong>=<em><code>4</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMagWarp" class="doc_header"><code>class</code> <code>TSMagWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L154" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ord</code></strong>=<em><code>4</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies warping to the y-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on a smooth random curve</p>
 
@@ -547,7 +525,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSTimeWarp" class="doc_header"><code>class</code> <code>TSTimeWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L173" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ord</code></strong>=<em><code>4</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSTimeWarp" class="doc_header"><code>class</code> <code>TSTimeWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L168" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ord</code></strong>=<em><code>6</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies time warping to the x-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on a smooth random curve</p>
 
@@ -597,7 +575,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSWindowWarp" class="doc_header"><code>class</code> <code>TSWindowWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L187" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSWindowWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSWindowWarp" class="doc_header"><code>class</code> <code>TSWindowWarp</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L182" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSWindowWarp</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies window slicing to the x-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on a random linear curve based on
 <a href="https://halshs.archives-ouvertes.fr/halshs-01357973/document">https://halshs.archives-ouvertes.fr/halshs-01357973/document</a></p>
@@ -647,7 +625,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMagScale" class="doc_header"><code>class</code> <code>TSMagScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L202" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMagScale" class="doc_header"><code>class</code> <code>TSMagScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L197" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies scaling to the y-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on a scalar</p>
 
@@ -672,7 +650,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMagScalePerVar" class="doc_header"><code>class</code> <code>TSMagScalePerVar</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L216" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagScalePerVar</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMagScalePerVar" class="doc_header"><code>class</code> <code>TSMagScalePerVar</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L211" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMagScalePerVar</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies per_var scaling to the y-axis of a <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> batch based on a scalar</p>
 
@@ -724,7 +702,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomResizedCrop" class="doc_header"><code>class</code> <code>TSRandomResizedCrop</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L235" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomResizedCrop</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>size</code></strong>=<em><code>None</code></em>, <strong><code>scale</code></strong>=<em><code>None</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomResizedCrop" class="doc_header"><code>class</code> <code>TSRandomResizedCrop</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L230" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomResizedCrop</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>size</code></strong>=<em><code>None</code></em>, <strong><code>scale</code></strong>=<em><code>None</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly amplifies a sequence focusing on a random section of the steps</p>
 
@@ -775,7 +753,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSWindowSlicing" class="doc_header"><code>class</code> <code>TSWindowSlicing</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L275" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSWindowSlicing</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSWindowSlicing" class="doc_header"><code>class</code> <code>TSWindowSlicing</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L270" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSWindowSlicing</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly extracts an resize a ts slice based on <a href="https://halshs.archives-ouvertes.fr/halshs-01357973/document">https://halshs.archives-ouvertes.fr/halshs-01357973/document</a></p>
 
@@ -825,7 +803,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomZoomOut" class="doc_header"><code>class</code> <code>TSRandomZoomOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L291" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomZoomOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomZoomOut" class="doc_header"><code>class</code> <code>TSRandomZoomOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L286" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomZoomOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly compresses a sequence on the x-axis</p>
 
@@ -874,7 +852,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomTimeScale" class="doc_header"><code>class</code> <code>TSRandomTimeScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L312" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTimeScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomTimeScale" class="doc_header"><code>class</code> <code>TSRandomTimeScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L307" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTimeScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly amplifies/ compresses a sequence on the x-axis keeping the same length</p>
 
@@ -923,7 +901,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomTimeStep" class="doc_header"><code>class</code> <code>TSRandomTimeStep</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L325" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTimeStep</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomTimeStep" class="doc_header"><code>class</code> <code>TSRandomTimeStep</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L320" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTimeStep</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Compresses a sequence on the x-axis by randomly selecting sequence steps and interpolating to previous size</p>
 
@@ -972,7 +950,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSSubsampleSteps" class="doc_header"><code>class</code> <code>TSSubsampleSteps</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L344" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSSubsampleSteps</code>(<strong><code>step_pct</code></strong>=<em><code>1.0</code></em>, <strong><code>same_seq_len</code></strong>=<em><code>True</code></em>, <strong><code>magnitude</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSResampleSteps" class="doc_header"><code>class</code> <code>TSResampleSteps</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L339" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSResampleSteps</code>(<strong><code>step_pct</code></strong>=<em><code>1.0</code></em>, <strong><code>same_seq_len</code></strong>=<em><code>True</code></em>, <strong><code>magnitude</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Transform that randomly selects and sorts sequence steps (with replacement) maintaining the sequence length</p>
 
@@ -1000,8 +978,8 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_eq</span><span class="p">(</span><span class="n">TSSubsampleSteps</span><span class="p">(</span><span class="n">step_pct</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span> <span class="n">same_seq_len</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">round</span><span class="p">(</span><span class="mf">.9</span><span class="o">*</span><span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-<span class="n">test_eq</span><span class="p">(</span><span class="n">TSSubsampleSteps</span><span class="p">(</span><span class="n">step_pct</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span> <span class="n">same_seq_len</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_eq</span><span class="p">(</span><span class="n">TSResampleSteps</span><span class="p">(</span><span class="n">step_pct</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span> <span class="n">same_seq_len</span><span class="o">=</span><span class="kc">False</span><span class="p">)(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">round</span><span class="p">(</span><span class="mf">.9</span><span class="o">*</span><span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">TSResampleSteps</span><span class="p">(</span><span class="n">step_pct</span><span class="o">=</span><span class="mf">.9</span><span class="p">,</span> <span class="n">same_seq_len</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -1022,7 +1000,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSBlur" class="doc_header"><code>class</code> <code>TSBlur</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L366" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSBlur</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>filt_len</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSBlur" class="doc_header"><code>class</code> <code>TSBlur</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L363" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSBlur</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>filt_len</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Blurs a sequence applying a filter of type [1, 0, 1]</p>
 
@@ -1072,7 +1050,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSSmooth" class="doc_header"><code>class</code> <code>TSSmooth</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L385" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSSmooth</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>filt_len</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSSmooth" class="doc_header"><code>class</code> <code>TSSmooth</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L382" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSSmooth</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>filt_len</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Smoothens a sequence applying a filter of type [1, 5, 1]</p>
 
@@ -1122,7 +1100,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="maddest" class="doc_header"><code>maddest</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L405" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>maddest</code>(<strong><code>d</code></strong>, <strong><code>axis</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="maddest" class="doc_header"><code>maddest</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L402" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>maddest</code>(<strong><code>d</code></strong>, <strong><code>axis</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -1146,7 +1124,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSFreqDenoise" class="doc_header"><code>class</code> <code>TSFreqDenoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L408" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSFreqDenoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>wavelet</code></strong>=<em><code>'db4'</code></em>, <strong><code>level</code></strong>=<em><code>2</code></em>, <strong><code>thr</code></strong>=<em><code>None</code></em>, <strong><code>thr_mode</code></strong>=<em><code>'hard'</code></em>, <strong><code>pad_mode</code></strong>=<em><code>'per'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSFreqDenoise" class="doc_header"><code>class</code> <code>TSFreqDenoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L406" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSFreqDenoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>wavelet</code></strong>=<em><code>'db4'</code></em>, <strong><code>level</code></strong>=<em><code>2</code></em>, <strong><code>thr</code></strong>=<em><code>None</code></em>, <strong><code>thr_mode</code></strong>=<em><code>'hard'</code></em>, <strong><code>pad_mode</code></strong>=<em><code>'per'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Denoises a sequence applying a wavelet decomposition method</p>
 
@@ -1174,8 +1152,12 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_eq</span><span class="p">(</span><span class="n">TSFreqDenoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">test_ne</span><span class="p">(</span><span class="n">TSFreqDenoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">xb</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">try</span><span class="p">:</span> 
+    <span class="kn">import</span> <span class="nn">pywt</span>
+    <span class="n">test_eq</span><span class="p">(</span><span class="n">TSFreqDenoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">test_ne</span><span class="p">(</span><span class="n">TSFreqDenoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">xb</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span> 
+    <span class="k">pass</span>
 </pre></div>
 
     </div>
@@ -1196,7 +1178,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomFreqNoise" class="doc_header"><code>class</code> <code>TSRandomFreqNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L439" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomFreqNoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>wavelet</code></strong>=<em><code>'db4'</code></em>, <strong><code>level</code></strong>=<em><code>2</code></em>, <strong><code>mode</code></strong>=<em><code>'constant'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomFreqNoise" class="doc_header"><code>class</code> <code>TSRandomFreqNoise</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L441" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomFreqNoise</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>wavelet</code></strong>=<em><code>'db4'</code></em>, <strong><code>level</code></strong>=<em><code>2</code></em>, <strong><code>mode</code></strong>=<em><code>'constant'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applys random noise using a wavelet decomposition method</p>
 
@@ -1224,7 +1206,11 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_eq</span><span class="p">(</span><span class="n">TSRandomFreqNoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">try</span><span class="p">:</span> 
+    <span class="kn">import</span> <span class="nn">pywt</span>
+    <span class="n">test_eq</span><span class="p">(</span><span class="n">TSRandomFreqNoise</span><span class="p">()(</span><span class="n">xb</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">xb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span> 
+    <span class="k">pass</span>
 </pre></div>
 
     </div>
@@ -1245,7 +1231,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomResizedLookBack" class="doc_header"><code>class</code> <code>TSRandomResizedLookBack</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L456" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomResizedLookBack</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomResizedLookBack" class="doc_header"><code>class</code> <code>TSRandomResizedLookBack</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L462" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomResizedLookBack</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Selects a random number of sequence steps starting from the end and return an output of the same shape</p>
 
@@ -1296,7 +1282,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomLookBackOut" class="doc_header"><code>class</code> <code>TSRandomLookBackOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L472" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomLookBackOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomLookBackOut" class="doc_header"><code>class</code> <code>TSRandomLookBackOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L478" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomLookBackOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Selects a random number of sequence steps starting from the end and set them to zero</p>
 
@@ -1347,7 +1333,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSVarOut" class="doc_header"><code>class</code> <code>TSVarOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L488" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSVarOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSVarOut" class="doc_header"><code>class</code> <code>TSVarOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L494" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSVarOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Set the value of a random number of variables to zero</p>
 
@@ -1396,7 +1382,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSCutOut" class="doc_header"><code>class</code> <code>TSCutOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L512" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSCutOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSCutOut" class="doc_header"><code>class</code> <code>TSCutOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L518" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSCutOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Sets a random section of the sequence to zero</p>
 
@@ -1445,7 +1431,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSTimeStepOut" class="doc_header"><code>class</code> <code>TSTimeStepOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L534" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeStepOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSTimeStepOut" class="doc_header"><code>class</code> <code>TSTimeStepOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L540" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTimeStepOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Sets random sequence steps to zero</p>
 
@@ -1494,7 +1480,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomCropPad" class="doc_header"><code>class</code> <code>TSRandomCropPad</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L551" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomCropPad</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomCropPad" class="doc_header"><code>class</code> <code>TSRandomCropPad</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L557" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomCropPad</code>(<strong><code>magnitude</code></strong>=<em><code>0.05</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Crops a section of the sequence of a random length</p>
 
@@ -1543,7 +1529,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSMaskOut" class="doc_header"><code>class</code> <code>TSMaskOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L574" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMaskOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>lm</code></strong>:<code>int</code>=<em><code>3</code></em>, <strong><code>stateful</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>sync</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>subsequence_mask</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>variable_mask</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>future_mask</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>schedule_func</code></strong>:<code>Optional</code>[<code>callable</code>]=<em><code>None</code></em>, <strong><code>compensate</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMaskOut" class="doc_header"><code>class</code> <code>TSMaskOut</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L577" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMaskOut</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>compensate</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies a random mask</p>
 
@@ -1593,7 +1579,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSInputDropout" class="doc_header"><code>class</code> <code>TSInputDropout</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L596" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSInputDropout</code>(<strong><code>magnitude</code></strong>=<em><code>0.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSInputDropout" class="doc_header"><code>class</code> <code>TSInputDropout</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L595" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSInputDropout</code>(<strong><code>magnitude</code></strong>=<em><code>0.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies input dropout with required_grad=False</p>
 
@@ -1643,7 +1629,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSTranslateX" class="doc_header"><code>class</code> <code>TSTranslateX</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L610" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTranslateX</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSTranslateX" class="doc_header"><code>class</code> <code>TSTranslateX</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L611" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSTranslateX</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Moves a selected sequence window a random number of steps</p>
 
@@ -1692,7 +1678,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomShift" class="doc_header"><code>class</code> <code>TSRandomShift</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L634" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomShift</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomShift" class="doc_header"><code>class</code> <code>TSRandomShift</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L635" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomShift</code>(<strong><code>magnitude</code></strong>=<em><code>0.02</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Shifts and splits a sequence</p>
 
@@ -1741,7 +1727,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSHorizontalFlip" class="doc_header"><code>class</code> <code>TSHorizontalFlip</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L648" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSHorizontalFlip</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSHorizontalFlip" class="doc_header"><code>class</code> <code>TSHorizontalFlip</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L649" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSHorizontalFlip</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Flips the sequence along the x-axis</p>
 
@@ -1791,7 +1777,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomTrend" class="doc_header"><code>class</code> <code>TSRandomTrend</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L661" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTrend</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomTrend" class="doc_header"><code>class</code> <code>TSRandomTrend</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L662" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomTrend</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly rotates the sequence along the z-axis</p>
 
@@ -1840,7 +1826,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSVerticalFlip" class="doc_header"><code>class</code> <code>TSVerticalFlip</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L682" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSVerticalFlip</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSVerticalFlip" class="doc_header"><code>class</code> <code>TSVerticalFlip</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L683" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSVerticalFlip</code>(<strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Applies a negative value to the time sequence</p>
 
@@ -1890,7 +1876,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSResize" class="doc_header"><code>class</code> <code>TSResize</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L693" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSResize</code>(<strong><code>magnitude</code></strong>=<em><code>-0.5</code></em>, <strong><code>size</code></strong>=<em><code>None</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSResize" class="doc_header"><code>class</code> <code>TSResize</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L694" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSResize</code>(<strong><code>magnitude</code></strong>=<em><code>-0.5</code></em>, <strong><code>size</code></strong>=<em><code>None</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Resizes the sequence length of a time series</p>
 
@@ -1940,7 +1926,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomSize" class="doc_header"><code>class</code> <code>TSRandomSize</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L707" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomSize</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomSize" class="doc_header"><code>class</code> <code>TSRandomSize</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L708" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomSize</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly resizes the sequence length of a time series</p>
 
@@ -1994,7 +1980,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomLowRes" class="doc_header"><code>class</code> <code>TSRandomLowRes</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L720" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomLowRes</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomLowRes" class="doc_header"><code>class</code> <code>TSRandomLowRes</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L721" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomLowRes</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly resizes the sequence length of a time series to a lower resolution</p>
 
@@ -2026,7 +2012,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSDownUpScale" class="doc_header"><code>class</code> <code>TSDownUpScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L733" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSDownUpScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSDownUpScale" class="doc_header"><code>class</code> <code>TSDownUpScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L734" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSDownUpScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Downscales a time series and upscales it again to previous sequence length</p>
 
@@ -2075,7 +2061,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TSRandomDownUpScale" class="doc_header"><code>class</code> <code>TSRandomDownUpScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L748" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomDownUpScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSRandomDownUpScale" class="doc_header"><code>class</code> <code>TSRandomDownUpScale</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L749" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandomDownUpScale</code>(<strong><code>magnitude</code></strong>=<em><code>0.5</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong><code>mode</code></strong>=<em><code>'linear'</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Randomly downscales a time series and upscales it again to previous sequence length</p>
 
@@ -2170,6 +2156,93 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
     
 <div class="cell border-box-sizing code_cell rendered">
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="TSRandom2Value" class="doc_header"><code>class</code> <code>TSRandom2Value</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L785" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSRandom2Value</code>(<strong><code>magnitude</code></strong>=<em><code>0.1</code></em>, <strong><code>sel_vars</code></strong>=<em><code>None</code></em>, <strong><code>static</code></strong>=<em><code>False</code></em>, <strong><code>value</code></strong>=<em><code>nan</code></em>, <strong><code>mask_fn</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+</blockquote>
+<p>Randomly sets selected variables of type <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> to predefined value (default: np.nan)</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">TSTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">TSRandom2Value</span><span class="p">(</span><span class="n">magnitude</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">sel_vars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])(</span><span class="n">t</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>tensor([[[1., 1., nan, 1.],
+         [1., 1., 1., 1.],
+         [nan, nan, 1., 1.]],
+
+        [[nan, 1., 1., nan],
+         [1., 1., 1., 1.],
+         [1., nan, nan, nan]]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">TSTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">test_gt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">TSRandom2Value</span><span class="p">(</span><span class="n">magnitude</span><span class="o">=</span><span class="mf">.5</span><span class="p">)(</span><span class="n">t</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">TSTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">test_gt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">TSRandom2Value</span><span class="p">(</span><span class="n">magnitude</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">sel_vars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])(</span><span class="n">t</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">TSTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">test_eq</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">TSRandom2Value</span><span class="p">(</span><span class="n">magnitude</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">sel_vars</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])(</span><span class="n">t</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
     {% endraw %}
 
@@ -2184,7 +2257,66 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="RandAugment" class="doc_header"><code>class</code> <code>RandAugment</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L834" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>RandAugment</code>(<strong><code>tfms</code></strong>:<code>list</code>, <strong><code>N</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>M</code></strong>:<code>int</code>=<em><code>3</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TSMask2Value" class="doc_header"><code>class</code> <code>TSMask2Value</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L805" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TSMask2Value</code>(<strong><code>mask_fn</code></strong>, <strong><code>value</code></strong>=<em><code>nan</code></em>, <strong><code>sel_vars</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+</blockquote>
+<p>Randomly sets selected variables of type <a href="/data.core.html#TSTensor"><code>TSTensor</code></a> to predefined value (default: np.nan)</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">TSTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">_mask_fn</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mf">.15</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand_like</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">r</span><span class="p">)</span>
+<span class="n">test_gt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">TSMask2Value</span><span class="p">(</span><span class="n">_mask_fn</span><span class="p">)(</span><span class="n">t</span><span class="p">,</span> <span class="n">split_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h2 id="RandAugment" class="doc_header"><code>class</code> <code>RandAugment</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L870" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>RandAugment</code>(<strong><code>tfms</code></strong>:<code>list</code>, <strong><code>N</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>M</code></strong>:<code>int</code>=<em><code>3</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>A transform that before_call its state at each <code>__call__</code></p>
 
@@ -2233,7 +2365,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="TestTfm" class="doc_header"><code>class</code> <code>TestTfm</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L861" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TestTfm</code>(<strong><code>tfm</code></strong>, <strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
+<h2 id="TestTfm" class="doc_header"><code>class</code> <code>TestTfm</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L897" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>TestTfm</code>(<strong><code>tfm</code></strong>, <strong><code>magnitude</code></strong>=<em><code>1.0</code></em>, <strong><code>ex</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>) :: <code>RandTransform</code></p>
 </blockquote>
 <p>Utility class to test the output of selected tfms during training</p>
 
@@ -2265,7 +2397,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_tfm_name" class="doc_header"><code>get_tfm_name</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L875" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_tfm_name</code>(<strong><code>tfm</code></strong>)</p>
+<h4 id="get_tfm_name" class="doc_header"><code>get_tfm_name</code><a href="https://github.com/timeseriesAI/tsai/tree/main/tsai/data/transforms.py#L911" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_tfm_name</code>(<strong><code>tfm</code></strong>)</p>
 </blockquote>
 
 </div>

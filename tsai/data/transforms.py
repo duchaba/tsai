@@ -8,22 +8,17 @@ __all__ = ['TSIdentity', 'TSShuffle_HLs', 'TSShuffleSteps', 'TSMagAddNoise', 'TS
            'TSRandomFreqNoise', 'TSRandomResizedLookBack', 'TSRandomLookBackOut', 'TSVarOut', 'TSCutOut',
            'TSTimeStepOut', 'TSRandomCropPad', 'TSMaskOut', 'TSInputDropout', 'TSTranslateX', 'TSRandomShift',
            'TSHorizontalFlip', 'TSRandomTrend', 'TSRandomRotate', 'TSVerticalFlip', 'TSResize', 'TSRandomSize',
-           'TSRandomLowRes', 'TSDownUpScale', 'TSRandomDownUpScale', 'TSRandomConv', 'all_TS_randaugs', 'RandAugment',
-           'TestTfm', 'get_tfm_name']
-
-# Cell
-from ..imports import *
-from fastai.vision.augment import RandTransform
-from ..utils import *
-from .external import *
-from .core import *
-from .preprocessing import *
+           'TSRandomLowRes', 'TSDownUpScale', 'TSRandomDownUpScale', 'TSRandomConv', 'TSRandom2Value', 'TSMask2Value',
+           'all_TS_randaugs', 'RandAugment', 'TestTfm', 'get_tfm_name']
 
 # Cell
 from scipy.interpolate import CubicSpline
-from scipy.ndimage import convolve1d, zoom
-import pywt
-from pyts.image.gaf import GramianAngularField
+from scipy.ndimage import convolve1d
+from fastcore.transform import compose_tfms
+from fastai.vision.augment import RandTransform
+from ..imports import *
+from ..utils import *
+from .core import *
 
 # Cell
 class TSIdentity(RandTransform):
@@ -173,7 +168,7 @@ class TSMagWarp(RandTransform):
 class TSTimeWarp(RandTransform):
     "Applies time warping to the x-axis of a `TSTensor` batch based on a smooth random curve"
     order = 90
-    def __init__(self, magnitude=0.02, ord=4, ex=None, **kwargs):
+    def __init__(self, magnitude=0.1, ord=6, ex=None, **kwargs):
         self.magnitude, self.ord, self.ex = magnitude, ord, ex
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
@@ -404,8 +399,9 @@ class TSSmooth(RandTransform):
         return output
 
 # Cell
-def maddest(d, axis=None): #Mean Absolute Deviation
-    return np.mean(np.absolute(d - np.mean(d, axis)), axis)
+def maddest(d, axis=None):
+    #Mean Absolute Deviation
+    return np.mean(np.absolute(d - np.mean(d, axis=axis)), axis=axis)
 
 class TSFreqDenoise(RandTransform):
     "Denoises a sequence applying a wavelet decomposition method"
@@ -414,6 +410,10 @@ class TSFreqDenoise(RandTransform):
         self.magnitude, self.ex = magnitude, ex
         self.wavelet, self.level, self.thr, self.thr_mode, self.pad_mode = wavelet, level, thr, thr_mode, pad_mode
         super().__init__(**kwargs)
+        try:
+            import pywt
+        except ImportError:
+            raise ImportError('You need to install pywt to run TSFreqDenoise')
     def encodes(self, o: TSTensor):
         if not self.magnitude or self.magnitude <= 0: return o
         """
@@ -445,6 +445,10 @@ class TSRandomFreqNoise(RandTransform):
         self.magnitude, self.ex = magnitude, ex
         self.wavelet, self.level, self.mode = wavelet, level, mode
         super().__init__(**kwargs)
+        try:
+            import pywt
+        except ImportError:
+            raise ImportError('You need to install pywt to run TSRandomFreqNoise')
     def encodes(self, o: TSTensor):
         if not self.magnitude or self.magnitude <= 0: return o
         self.level = 1 if self.level is None else self.level
@@ -570,21 +574,15 @@ class TSRandomCropPad(RandTransform):
         return output
 
 # Cell
-
-from ..callback.MVP import create_mask
-
 class TSMaskOut(RandTransform):
     """Applies a random mask"""
     order = 90
-    def __init__(self, magnitude=0.1, lm:int=3, stateful:bool=True, sync:bool=False, subsequence_mask:bool=True,
-                 variable_mask:bool=False, future_mask:bool=False, schedule_func:Optional[callable]=None, compensate:bool=False, ex=None, **kwargs):
+    def __init__(self, magnitude=0.1, compensate:bool=False, ex=None, **kwargs):
         store_attr()
         super().__init__(**kwargs)
     def encodes(self, o: TSTensor):
         if not self.magnitude or self.magnitude <= 0: return o
-        r = self.magnitude * self.schedule_func(self.pct_train) if self.schedule_func is not None else self.magnitude
-        mask = create_mask(o,  r=r, lm=self.lm, stateful=self.stateful, sync=self.sync,
-                           subsequence_mask=self.subsequence_mask, variable_mask=self.variable_mask, future_mask=self.future_mask)
+        mask = torch.rand_like(o) > (1 - self.magnitude)
         if self.compensate: # per sample and feature
             mean_per_seq = (torch.max(torch.ones(1, device=mask.device), torch.sum(mask, dim=-1).unsqueeze(-1)) / mask.shape[-1])
             output = o.masked_fill(mask, 0) / (1 - mean_per_seq)
@@ -594,7 +592,6 @@ class TSMaskOut(RandTransform):
         return output
 
 # Cell
-
 class TSInputDropout(RandTransform):
     """Applies input dropout with required_grad=False"""
     order = 90
@@ -602,9 +599,11 @@ class TSInputDropout(RandTransform):
         self.magnitude, self.ex = magnitude, ex
         self.dropout = nn.Dropout(magnitude)
         super().__init__(**kwargs)
+
+    @torch.no_grad()
     def encodes(self, o: TSTensor):
         if not self.magnitude or self.magnitude <= 0: return o
-        with torch.no_grad(): output = self.dropout(o)
+        output = self.dropout(o)
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         return output
 
@@ -763,7 +762,6 @@ class TSRandomDownUpScale(RandTransform):
         return output
 
 # Cell
-
 class TSRandomConv(RandTransform):
     """Applies a convolution with a random kernel and random weights with required_grad=False"""
     order = 90
@@ -782,6 +780,42 @@ class TSRandomConv(RandTransform):
         output = (1 - self.magnitude) * o + self.magnitude * self.conv(o)
         if self.ex is not None: output[...,self.ex,:] = o[...,self.ex,:]
         return output
+
+# Cell
+class TSRandom2Value(RandTransform):
+    "Randomly sets selected variables of type `TSTensor` to predefined value (default: np.nan)"
+    order = 90
+    def __init__(self, magnitude=0.1, sel_vars=None, static=False, value=np.nan, mask_fn=None, **kwargs):
+        self.sel_vars = sel_vars
+        self.magnitude, self.static, self.value = magnitude , static, value
+        super().__init__(**kwargs)
+
+    def encodes(self, o:TSTensor):
+        if not self.magnitude or self.magnitude <= 0 or self.magnitude >= 1: return o
+        if self.static:
+            vals = torch.rand(*o.shape[:-1], device=o.device)
+        else:
+            vals = torch.rand(*o.shape, device=o.device)
+        mask = vals > (1 - self.magnitude)
+        if self.sel_vars is not None:
+            mask[:, np.isin(np.arange(o.shape[1]), self.sel_vars, invert=True)] = False
+        return o.masked_fill(mask, self.value)
+
+# Cell
+class TSMask2Value(RandTransform):
+    "Randomly sets selected variables of type `TSTensor` to predefined value (default: np.nan)"
+    order = 90
+    def __init__(self, mask_fn, value=np.nan, sel_vars=None, **kwargs):
+        self.sel_vars = sel_vars
+        self.mask_fn = mask_fn
+        self.value = value
+        super().__init__(**kwargs)
+
+    def encodes(self, o:TSTensor):
+        mask = self.mask_fn(o)
+        if self.sel_vars is not None:
+            mask[:, self.sel_vars] = False
+        return o.masked_fill(mask, self.value)
 
 # Cell
 all_TS_randaugs = [

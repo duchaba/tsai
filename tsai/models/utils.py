@@ -2,15 +2,20 @@
 
 __all__ = ['get_layers', 'is_layer', 'is_linear', 'is_bn', 'is_conv_linear', 'is_affine_layer', 'is_conv', 'has_bias',
            'has_weight', 'has_weight_or_bias', 'check_bias', 'check_weight', 'get_nf', 'ts_splitter',
-           'transfer_weights', 'build_ts_model', 'build_tabular_model', 'build_tsimage_model', 'count_parameters',
-           'build_model', 'create_model', 'create_tabular_model', 'get_clones', 'split_model', 'seq_len_calculator',
-           'change_model_head', 'naive_forecaster', 'true_forecaster']
+           'transfer_weights', 'build_ts_model', 'build_model', 'create_model', 'count_parameters',
+           'build_tsimage_model', 'build_tabular_model', 'create_tabular_model', 'get_clones', 'split_model',
+           'output_size_calculator', 'change_model_head', 'naive_forecaster', 'true_forecaster']
 
 # Cell
+from copy import deepcopy
+from fastai.layers import flatten_model, params, apply_init
+from fastai.learner import Learner
+from fastai.data.transforms import get_c
+from fastai.tabular.model import *
+from fastai.callback.schedule import *
+from fastai.vision.models.xresnet import *
 from ..imports import *
 from .layers import *
-from fastai.tabular.model import *
-from fastai.vision.models.all import *
 
 # Cell
 def get_layers(model, cond=noop, full=True):
@@ -81,7 +86,7 @@ def ts_splitter(m):
     "Split of a model between body and head"
     return L(m.backbone, m.head).map(params)
 
-
+# Cell
 def transfer_weights(model, weights_path:Path, device:torch.device=None, exclude_head:bool=True):
     """Utility function that allows to easily transfer weights between models.
     Taken from the great self-supervised repository created by Kerem Turgutlu.
@@ -109,7 +114,7 @@ def transfer_weights(model, weights_path:Path, device:torch.device=None, exclude
         else:
             print(f"weights from {weights_path} successfully transferred!\n")
 
-
+# Cell
 def build_ts_model(arch, c_in=None, c_out=None, seq_len=None, d=None, dls=None, device=None, verbose=False,
                    pretrained=False, weights_path=None, exclude_head=True, cut=-1, init=None, arch_config={}, **kwargs):
 
@@ -119,10 +124,10 @@ def build_ts_model(arch, c_in=None, c_out=None, seq_len=None, d=None, dls=None, 
         c_out = ifnone(c_out, dls.c)
         seq_len = ifnone(seq_len, dls.len)
         d = ifnone(d, dls.d)
-    if is_listy(d) and len(d) == 2:
+    if d:
         if 'custom_head' not in kwargs.keys():
-            kwargs['custom_head'] = partial(lin_3d_head, d=d)
-        else:
+            kwargs['custom_head'] = partial(lin_nd_head, d=d)
+        elif not isinstance(kwargs['custom_head'], nn.Module):
             kwargs['custom_head'] = partial(kwargs['custom_head'], d=d)
     if sum([1 for v in ['RNN_FCN', 'LSTM_FCN', 'RNNPlus', 'LSTMPlus', 'GRUPlus', 'InceptionTime', 'TSiT',
                         'GRU_FCN', 'OmniScaleCNN', 'mWDN', 'TST', 'XCM', 'MLP', 'MiniRocket', 'InceptionRocket']
@@ -172,7 +177,26 @@ def build_ts_model(arch, c_in=None, c_out=None, seq_len=None, d=None, dls=None, 
 build_model = build_ts_model
 create_model = build_ts_model
 
+# Cell
+def count_parameters(model, trainable=True):
+    if trainable: return sum(p.numel() for p in model.parameters() if p.requires_grad)
+    else: return sum(p.numel() for p in model.parameters())
 
+# Cell
+@delegates(XResNet.__init__)
+def build_tsimage_model(arch, c_in=None, c_out=None, dls=None, pretrained=False, device=None, verbose=False, init=None, arch_config={}, **kwargs):
+    device = ifnone(device, default_device())
+    if dls is not None:
+        c_in = ifnone(c_in, dls.vars)
+        c_out = ifnone(c_out, dls.c)
+
+    model = arch(pretrained=pretrained, c_in=c_in, n_out=c_out, **arch_config, **kwargs).to(device=device)
+    setattr(model, "__name__", arch.__name__)
+    if init is not None:
+        apply_init(model[1] if pretrained else model, init)
+    return model
+
+# Cell
 @delegates(TabularModel.__init__)
 def build_tabular_model(arch, dls, layers=None, emb_szs=None, n_out=None, y_range=None, device=None, arch_config={}, **kwargs):
     if device is None: device = default_device()
@@ -191,25 +215,6 @@ def build_tabular_model(arch, dls, layers=None, emb_szs=None, n_out=None, y_rang
 
 create_tabular_model = build_tabular_model
 
-
-@delegates(XResNet.__init__)
-def build_tsimage_model(arch, c_in=None, c_out=None, dls=None, pretrained=False, device=None, verbose=False, init=None, arch_config={}, **kwargs):
-    device = ifnone(device, default_device())
-    if dls is not None:
-        c_in = ifnone(c_in, dls.vars)
-        c_out = ifnone(c_out, dls.c)
-
-    model = arch(pretrained=pretrained, c_in=c_in, n_out=c_out, **arch_config, **kwargs).to(device=device)
-    setattr(model, "__name__", arch.__name__)
-    if init is not None:
-        apply_init(model[1] if pretrained else model, init)
-    return model
-
-
-def count_parameters(model, trainable=True):
-    if trainable: return sum(p.numel() for p in model.parameters() if p.requires_grad)
-    else: return sum(p.numel() for p in model.parameters())
-
 # Cell
 def get_clones(module, N):
     return nn.ModuleList([deepcopy(module) for i in range(N)])
@@ -218,9 +223,26 @@ def get_clones(module, N):
 def split_model(m): return m.backbone, m.head
 
 # Cell
-def seq_len_calculator(seq_len, **kwargs):
-    t = torch.rand(1, 1, seq_len)
-    return nn.Conv1d(1, 1, **kwargs)(t).shape[-1]
+@torch.no_grad()
+def output_size_calculator(mod, c_in, seq_len=None):
+    assert isinstance(mod, nn.Module)
+    return_q_len = True
+    if seq_len is None:
+        seq_len = 50
+        return_q_len = False
+    try:
+        params_0 = list(mod.parameters())[0]
+        xb = torch.rand(1, c_in, seq_len, device=params_0.device, dtype=params_0.dtype)
+    except:
+        xb = torch.rand(1, c_in, seq_len)
+    training = mod.training
+    mod.eval()
+    c_out, q_len = mod(xb).shape[1:]
+    mod.training = training
+    if return_q_len:
+        return c_out, q_len
+    else:
+        return c_out, None
 
 # Cell
 def change_model_head(model, custom_head, **kwargs):

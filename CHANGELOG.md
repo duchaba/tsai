@@ -2,6 +2,206 @@
 
 <!-- do not remove -->
 
+## 0.3.0
+
+### New Features
+
+- Added function that pads sequences to same length ([#410](https://github.com/timeseriesAI/tsai/issues/410))
+
+- Added TSRandomStandardize preprocessing technique ([#396](https://github.com/timeseriesAI/tsai/issues/396))
+
+- New visualization techniques: model's feature importance and step importance ([#393](https://github.com/timeseriesAI/tsai/issues/393))
+
+- Allow from tsai.basics import * to speed up loading ([#320](https://github.com/timeseriesAI/tsai/issues/320))
+
+
+### Bugs Squashed
+
+- Separate core from non-core dependencies in tsai - pip install tsai[extras]([#389](https://github.com/timeseriesAI/tsai/issues/318)). This is an important change that:
+   - reduces the time to ```pip install tsai``` 
+   - avoid errors during installation
+   - reduces the time to load tsai using ```from tsai.all import *```
+
+
+
+## 0.2.25
+### Breaking Changes
+
+- updated forward_gaps removing nan_to_num ([#331](https://github.com/timeseriesAI/tsai/issues/331))
+
+- TSRobustScaler only applied by_var ([#329](https://github.com/timeseriesAI/tsai/issues/329))
+
+- remove add_na arg from TSCategorize ([#327](https://github.com/timeseriesAI/tsai/issues/327))
+
+### New Features
+
+- added IntraClassCutMix1d ([#384](https://github.com/timeseriesAI/tsai/issues/384))
+
+- added learn.calibrate_model method ([#379](https://github.com/timeseriesAI/tsai/issues/379))
+
+- added analyze_array function ([#378](https://github.com/timeseriesAI/tsai/issues/378))
+
+- Added TSAddNan transform ([#376](https://github.com/timeseriesAI/tsai/issues/376))
+
+- added dummify function to create dummy data from original data ([#366](https://github.com/timeseriesAI/tsai/issues/366))
+
+- added Locality Self Attention to TSiT ([#363](https://github.com/timeseriesAI/tsai/issues/363))
+
+- added sel_vars argument to MVP callback ([#349](https://github.com/timeseriesAI/tsai/issues/349))
+
+- added sel_vars argument to TSNan2Value ([#348](https://github.com/timeseriesAI/tsai/issues/348))
+
+- added multiclass, weighted FocalLoss ([#346](https://github.com/timeseriesAI/tsai/issues/346))
+
+- added TSRollingMean batch transform ([#343](https://github.com/timeseriesAI/tsai/issues/343))
+
+- added recall_at_specificity metric ([#342](https://github.com/timeseriesAI/tsai/issues/342))
+
+- added train_metrics argument to ts_learner ([#341](https://github.com/timeseriesAI/tsai/issues/341))
+
+- added hist to PredictionDynamics for binary classification ([#339](https://github.com/timeseriesAI/tsai/issues/339))
+
+- add padding_idxs to MultiEmbedding ([#330](https://github.com/timeseriesAI/tsai/issues/330))
+
+### Bugs Squashed
+
+- sort_by data may be duplicated in SlidingWindowPanel ([#389](https://github.com/timeseriesAI/tsai/issues/389))
+
+- create_script splits the nb name if multiple underscores are used ([#385](https://github.com/timeseriesAI/tsai/issues/385))
+
+- added torch functional dependency to plot_calibration_curve ([#383](https://github.com/timeseriesAI/tsai/issues/383))
+
+- issue when setting horizon to 0 in SlidingWindow ([#382](https://github.com/timeseriesAI/tsai/issues/382))
+
+- replace learn by self in calibrate_model patch ([#381](https://github.com/timeseriesAI/tsai/issues/381))
+
+- Argument `d_head` is not used in TSiTPlus ([#380](https://github.com/timeseriesAI/tsai/issues/380))
+  - https://github.com/timeseriesAI/tsai/blob/6baf0ba2455895b57b54bf06744633b81cdcb2b3/tsai/models/TSiTPlus.py#L63
+
+- replace default relu activation by gelu in TSiT ([#361](https://github.com/timeseriesAI/tsai/issues/361))
+
+- sel_vars and sel_steps in TSDatasets and TSDalaloaders don't work when used simultaneously ([#347](https://github.com/timeseriesAI/tsai/issues/347))
+
+- ShowGraph fails when recoder.train_metrics=True ([#340](https://github.com/timeseriesAI/tsai/issues/340))
+
+- fixed 'se' always equal to 16 in MLSTM_FCN ([#337](https://github.com/timeseriesAI/tsai/issues/337))
+
+- ShowGraph doesn't work well when train_metrics=True ([#336](https://github.com/timeseriesAI/tsai/issues/336))
+
+- TSPositionGaps doesn't work on cuda ([#333](https://github.com/timeseriesAI/tsai/issues/333))
+
+- XResNet object has no attribute 'backbone' ([#332](https://github.com/timeseriesAI/tsai/issues/332))
+
+- import InceptionTimePlus in tsai.learner ([#328](https://github.com/timeseriesAI/tsai/issues/328))
+
+- df2Xy: Format correctly without the need to specify sort_by ([#324](https://github.com/timeseriesAI/tsai/issues/324))
+
+- bug in MVP code learn.model --> self.learn.model ([#323](https://github.com/timeseriesAI/tsai/issues/323))
+
+- Colab install issues: importing the lib takes forever ([#315](https://github.com/timeseriesAI/tsai/issues/315))
+
+- Calling learner.feature_importance on larger than memory dataset causes OOM ([#310](https://github.com/timeseriesAI/tsai/issues/310))
+
+
+## 0.2.24
+### Breaking Changes
+
+- removed InceptionTSiT, InceptionTSiTPlus, ConvTSiT & ConvTSiTPlus ([#276](https://github.com/timeseriesAI/tsai/issues/276))
+
+### New Features
+
+- add stateful custom sklearn API type tfms: TSShrinkDataFrame, TSOneHotEncoder, TSCategoricalEncoder ([#313](https://github.com/timeseriesAI/tsai/issues/313))
+
+- Pytorch 1.10 compatibility ([#311](https://github.com/timeseriesAI/tsai/issues/311))
+
+- ability to pad at the start/ end of sequences and filter results in SlidingWindow ([#307](https://github.com/timeseriesAI/tsai/issues/307))
+
+- added bias_init to TSiT ([#288](https://github.com/timeseriesAI/tsai/issues/288))
+
+- plot permutation feature importance after a model's been trained ([#286](https://github.com/timeseriesAI/tsai/issues/286))
+
+- added separable as an option to MultiConv1d ([#285](https://github.com/timeseriesAI/tsai/issues/285))
+
+- Modified TSiTPlus to accept a feature extractor and/or categorical variables ([#278](https://github.com/timeseriesAI/tsai/issues/278))
+
+### Bugs Squashed
+
+- learn modules takes too long to load ([#312](https://github.com/timeseriesAI/tsai/issues/312))
+
+- error in roll2d and roll3d when passing index 2 ([#304](https://github.com/timeseriesAI/tsai/issues/304))
+
+- TypeError: unhashable type: 'numpy.ndarray' ([#302](https://github.com/timeseriesAI/tsai/issues/302))
+
+- ValueError: only one element tensors can be converted to Python scalars ([#300](https://github.com/timeseriesAI/tsai/issues/300))
+
+- unhashable type: 'numpy.ndarray' when using multiclass multistep labels ([#298](https://github.com/timeseriesAI/tsai/issues/298))
+
+- incorrect data types in NumpyDatasets subset ([#297](https://github.com/timeseriesAI/tsai/issues/297))
+
+- create_future_mask creates a mask in the past ([#293](https://github.com/timeseriesAI/tsai/issues/293))
+
+- NameError: name 'X' is not defined in learner.feature_importance ([#291](https://github.com/timeseriesAI/tsai/issues/291))
+
+- TSiT test fails on cuda ([#287](https://github.com/timeseriesAI/tsai/issues/287))
+
+- MultiConv1d breaks when ni == nf ([#284](https://github.com/timeseriesAI/tsai/issues/284))
+
+- WeightedPerSampleLoss reported an error when used with LDS_weights ([#281](https://github.com/timeseriesAI/tsai/issues/281))
+
+- pos_encoding transfer weight in TSiT fails ([#280](https://github.com/timeseriesAI/tsai/issues/280))
+
+- MultiEmbedding cat_pos and cont_pos are not in state_dict() ([#277](https://github.com/timeseriesAI/tsai/issues/277))
+
+- fixed issue with MixedDataLoader  ([#229](https://github.com/timeseriesAI/tsai/pull/229)), thanks to [@Wabinab](https://github.com/Wabinab)
+
+
+
+## 0.2.23
+### Breaking Changes
+
+- removed torch-optimizer dependency ([#228](https://github.com/timeseriesAI/tsai/issues/228))
+
+### New Features
+
+- added option to train MVP on random sequence lengths ([#252](https://github.com/timeseriesAI/tsai/issues/252))
+
+- added ability to pass an arch name (str) to learner instead of class ([#217](https://github.com/timeseriesAI/tsai/issues/217))
+
+- created convenience fns create_directory and delete_directory in utils ([#213](https://github.com/timeseriesAI/tsai/issues/213))
+
+- added option to create random array of given shapes and dtypes ([#212](https://github.com/timeseriesAI/tsai/issues/212))
+
+- my_setup() print your main system and package versions ([#202](https://github.com/timeseriesAI/tsai/issues/202))
+
+- added a new tutorial on how to train large datasets using tsai ([#199](https://github.com/timeseriesAI/tsai/issues/199))
+
+- added a new function to load any file as a module ([#196](https://github.com/timeseriesAI/tsai/issues/196))
+
+### Bugs Squashed
+
+- Loading code just for inference takes too long ([#273](https://github.com/timeseriesAI/tsai/issues/273))
+
+- Fixed out-of-memory issue with large datasets on disk ([#126](https://github.com/timeseriesAI/tsai/issues/126))
+
+- AttributeError: module 'torch' has no attribute 'nan_to_num' ([#262](https://github.com/timeseriesAI/tsai/issues/262))
+
+- Fixed TypeError: unhashable type: 'numpy.ndarray' ([#250](https://github.com/timeseriesAI/tsai/issues/250))
+
+- Wrong link in paper references ([#249](https://github.com/timeseriesAI/tsai/issues/249))
+
+- remove default PATH which overwrites custom PATH ([#238](https://github.com/timeseriesAI/tsai/issues/238))
+
+- Predictions where not properly decoded when using with_decoded. ([#237](https://github.com/timeseriesAI/tsai/issues/237))
+
+- SettingWithCopyWarning: A value is trying to be set on a copy of a slice from a DataFrame ([#221](https://github.com/timeseriesAI/tsai/issues/221))
+
+- InceptionTimePlus wasn't imported by TSLearners ([#218](https://github.com/timeseriesAI/tsai/issues/218))
+
+- get_subset_dl fn is not properly creating a subset dataloader ([#211](https://github.com/timeseriesAI/tsai/issues/211))
+
+- Bug in WeightedPersSampleLoss ([#203](https://github.com/timeseriesAI/tsai/issues/203))
+
+
 ## 0.2.19
 
 ### New Features
@@ -50,7 +250,6 @@
     * added Learner.remove_all_cbs
     * updated get_X_preds to work with multilabel datasets
 * Miscellaneous:
-    * added natural mask that reuses missing data in the input
     * added rotate_axis utility functions
     
 ### Bug Fixes:   

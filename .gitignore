@@ -149,13 +149,13 @@ old/*
 *.ts
 *.tsf
 *.arff
-*.pth
+#*.pth
 *.pkl
 *.txt
 *.jpg
 *.zip
-*/nbs/export/*
-*/nbs/models/*
+*/export/*
+#*/nbs/models/*
 token
 
 Untitled*.ipynb
@@ -167,3 +167,4 @@ tmp/
 .pypirc
 pythonenv*/
 *.tgz
+token

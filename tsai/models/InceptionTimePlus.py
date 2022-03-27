@@ -5,11 +5,12 @@ __all__ = ['InceptionModulePlus', 'InceptionBlockPlus', 'InceptionTimePlus', 'In
            'InceptionTimeXLPlus', 'MultiInceptionTimePlus']
 
 # Cell
+from collections import OrderedDict
+from fastai.layers import *
 from ..imports import *
 from ..utils import *
 from .layers import *
 from .utils import *
-torch.set_num_threads(cpus)
 
 # Cell
 # This is an unofficial PyTorch implementation by Ignacio Oguiza - oguiza@gmail.com modified from:
@@ -145,13 +146,12 @@ class MultiInceptionTimePlus(nn.Sequential):
     """Class that allows you to create a model with multiple branches of InceptionTimePlus."""
     _arch = InceptionTimePlus
     def __init__(self, feat_list, c_out, seq_len=None, nf=32, nb_filters=None, depth=6, stoch_depth=1.,
-                flatten=False, concat_pool=False, fc_dropout=0., bn=False, y_range=None, custom_head=None, device=None, **kwargs):
+                flatten=False, concat_pool=False, fc_dropout=0., bn=False, y_range=None, custom_head=None, **kwargs):
         """
         Args:
             feat_list: list with number of features that will be passed to each body.
         """
         self.feat_list = [feat_list] if isinstance(feat_list, int) else feat_list
-        self.device = ifnone(device, default_device())
 
         # Backbone
         branches = nn.ModuleList()
@@ -160,8 +160,7 @@ class MultiInceptionTimePlus(nn.Sequential):
             if is_listy(feat): feat = len(feat)
             m = build_ts_model(self._arch, c_in=feat, c_out=c_out, seq_len=seq_len, nf=nf, nb_filters=nb_filters,
                                depth=depth, stoch_depth=stoch_depth, **kwargs)
-            with torch.no_grad():
-                self.head_nf += m[0](torch.randn(1, feat, ifnone(seq_len, 10)).to(self.device)).shape[1]
+            self.head_nf += output_size_calculator(m[0], feat, ifnone(seq_len, 10))[0]
             branches.append(m.backbone)
         backbone = _Splitter(self.feat_list, branches)
 
@@ -176,7 +175,6 @@ class MultiInceptionTimePlus(nn.Sequential):
 
         layers = OrderedDict([('backbone', nn.Sequential(backbone)), ('head', nn.Sequential(head))])
         super().__init__(layers)
-        self.to(self.device)
 
 # Internal Cell
 class _Splitter(Module):

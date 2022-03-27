@@ -2,45 +2,50 @@
 
 __all__ = ['totensor', 'toarray', 'toL', 'to3dtensor', 'to2dtensor', 'to1dtensor', 'to3darray', 'to2darray',
            'to1darray', 'to3d', 'to2d', 'to1d', 'to2dPlus', 'to3dPlus', 'to2dPlusTensor', 'to2dPlusArray',
-           'to3dPlusTensor', 'to3dPlusArray', 'todtype', 'bytes2size', 'bytes2GB', 'get_size', 'is_file',
-           'delete_all_in_dir', 'reverse_dict', 'is_tuple', 'itemify', 'isnone', 'exists', 'ifelse', 'is_not_close',
-           'test_not_close', 'test_type', 'test_ok', 'test_not_ok', 'test_error', 'test_eq_nan', 'assert_fn', 'test_gt',
-           'test_ge', 'test_lt', 'test_le', 'stack', 'stack_pad', 'match_seq_len', 'random_shuffle', 'cat2int',
-           'cycle_dl', 'cycle_dl_to_device', 'cycle_dl_estimate', 'cache_data', 'memmap2cache', 'cache_memmap',
-           'get_func_defaults', 'get_idx_from_df_col_vals', 'get_sublist_idxs', 'flatten_list', 'display_pd_df',
-           'ttest', 'tscore', 'ttest_tensor', 'pcc', 'scc', 'a', 'b', 'remove_fn', 'npsave', 'np_save', 'permute_2D',
-           'random_normal', 'random_half_normal', 'random_normal_tensor', 'random_half_normal_tensor', 'default_dpi',
-           'get_plot_fig', 'fig2buf', 'plot_scatter', 'get_idxs', 'apply_cmap', 'torch_tile', 'to_tsfresh_df', 'pcorr',
-           'scorr', 'torch_diff', 'get_outliers_IQR', 'clip_outliers', 'get_percentile', 'torch_clamp',
+           'to3dPlusTensor', 'to3dPlusArray', 'todtype', 'bytes2size', 'bytes2GB', 'get_size', 'get_dir_size',
+           'get_file_size', 'is_file', 'is_dir', 'delete_all_in_dir', 'reverse_dict', 'is_tuple', 'itemify', 'isnone',
+           'exists', 'ifelse', 'is_not_close', 'test_not_close', 'test_type', 'test_ok', 'test_not_ok', 'test_error',
+           'test_eq_nan', 'assert_fn', 'test_gt', 'test_ge', 'test_lt', 'test_le', 'stack', 'stack_pad',
+           'pad_sequences', 'match_seq_len', 'random_shuffle', 'cat2int', 'cycle_dl', 'cycle_dl_to_device',
+           'cycle_dl_estimate', 'cache_data', 'memmap2cache', 'cache_memmap', 'get_func_defaults',
+           'get_idx_from_df_col_vals', 'get_sublist_idxs', 'flatten_list', 'display_pd_df', 'ttest', 'kstest', 'tscore',
+           'ttest_tensor', 'pcc', 'scc', 'a', 'b', 'remove_fn', 'npsave', 'np_save', 'permute_2D', 'random_normal',
+           'random_half_normal', 'random_normal_tensor', 'random_half_normal_tensor', 'default_dpi', 'get_plot_fig',
+           'fig2buf', 'plot_scatter', 'get_idxs', 'apply_cmap', 'torch_tile', 'to_tsfresh_df', 'pcorr', 'scorr',
+           'torch_diff', 'get_outliers_IQR', 'clip_outliers', 'get_percentile', 'torch_clamp', 'get_robustscale_params',
            'torch_slice_by_dim', 'torch_nanmean', 'torch_nanstd', 'concat', 'reduce_memory_usage', 'cls_name', 'roll2d',
            'roll3d', 'random_roll2d', 'random_roll3d', 'rotate_axis0', 'rotate_axis1', 'rotate_axis2',
            'chunks_calculator', 'is_memory_shared', 'assign_in_chunks', 'create_array', 'create_empty_array',
            'np_save_compressed', 'np_load_compressed', 'np2memmap', 'torch_mean_groupby', 'torch_flip',
            'torch_nan_to_num', 'torch_masked_to_num', 'mpl_trend', 'int2digits', 'array2digits', 'sincos_encoding',
            'linear_encoding', 'encode_positions', 'sort_generator', 'get_subset_dict', 'create_dir', 'remove_dir',
-           'named_partial', 'yaml2dict']
+           'named_partial', 'yaml2dict', 'str2list', 'str2index', 'get_cont_cols', 'get_cat_cols', 'alphabet',
+           'ALPHABET', 'get_mapping', 'map_array', 'log_tfm', 'to_sincos_time', 'plot_feature_dist',
+           'rolling_moving_average', 'ffill_sequence', 'bfill_sequence', 'fbfill_sequence', 'dummify',
+           'shuffle_along_axis', 'analyze_feature', 'analyze_array', 'get_relpath']
 
 # Cell
+import string
+from scipy.stats import ttest_ind, ks_2samp, pearsonr, spearmanr, normaltest, linregress
 from .imports import *
-from fastcore.test import *
-import inspect
-import sklearn
 
 # Cell
 def totensor(o):
     if isinstance(o, torch.Tensor): return o
     elif isinstance(o, np.ndarray):  return torch.from_numpy(o)
+    elif isinstance(o, pd.DataFrame): return torch.from_numpy(o.values)
     else:
         try: return torch.tensor(o)
-        except: warnings.warn(f"Can't convert {type(o)} to torch.Tensor", Warning)
+        except: warn(f"Can't convert {type(o)} to torch.Tensor", Warning)
 
 
 def toarray(o):
     if isinstance(o, np.ndarray): return o
     elif isinstance(o, torch.Tensor): return o.cpu().numpy()
+    elif isinstance(o, pd.DataFrame): return o.values
     else:
         try: return np.asarray(o)
-        except: warnings.warn(f"Can't convert {type(o)} to np.array", Warning)
+        except: warn(f"Can't convert {type(o)} to np.array", Warning)
 
 
 def toL(o):
@@ -48,7 +53,7 @@ def toL(o):
     elif isinstance(o, (np.ndarray, torch.Tensor)): return L(o.tolist())
     else:
         try: return L(o)
-        except: warnings.warn(f'passed object needs to be of type L, list, np.ndarray or torch.Tensor but is {type(o)}', Warning)
+        except: warn(f'passed object needs to be of type L, list, np.ndarray or torch.Tensor but is {type(o)}', Warning)
 
 
 def to3dtensor(o):
@@ -101,7 +106,7 @@ def to1darray(o):
 
 def to3d(o):
     if o.ndim == 3: return o
-    if isinstance(o, np.ndarray): return to3darray(o)
+    if isinstance(o, (np.ndarray, pd.DataFrame)): return to3darray(o)
     if isinstance(o, torch.Tensor): return to3dtensor(o)
 
 
@@ -154,28 +159,70 @@ def todtype(dtype):
     return _to_type
 
 # Cell
-def bytes2size(size_bytes):
+def bytes2size(
+    size_bytes : int, # Number of bytes
+    decimals=2 # Number of decimals in the output
+    )->str:
     if size_bytes == 0: return "0B"
     size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
     i = int(math.floor(math.log(size_bytes, 1024)))
     p = math.pow(1024, i)
-    s = round(size_bytes / p, 2)
-    return "%s %s" % (s, size_name[i])
+    s = round(size_bytes / p, decimals)
+    return f'{s} {size_name[i]}'
 
 def bytes2GB(byts):
     return round(byts / math.pow(1024, 3), 2)
 
-def get_size(o, return_str=False):
+def get_size(
+    o, # Any object
+    return_str : bool = True, # True returns size in human-readable format (KB, MB, GB, ...). False in bytes.
+    decimals : int = 2, # Number of decimals in the output
+    ):
     s = sys.getsizeof(o)
-    if return_str: return bytes2size(s)
+    if return_str: return bytes2size(s, decimals=decimals)
     else: return s
 
+def get_dir_size(
+    dir_path : str,  # path to directory
+    return_str : bool = True, # True returns size in human-readable format (KB, MB, GB, ...). False in bytes.
+    decimals : int = 2, # Number of decimals in the output
+    verbose : bool = False, # Controls verbosity
+    ):
+    assert os.path.isdir(dir_path)
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(dir_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                fp_size = os.path.getsize(fp)
+                total_size += fp_size
+                pv(f'file: {fp[-50:]:50} size: {fp_size}', verbose)
+    if return_str:
+        return bytes2size(total_size, decimals=decimals)
+    return total_size
+
+def get_file_size(
+    file_path : str,  # path to file
+    return_str : bool = True, # True returns size in human-readable format (KB, MB, GB, ...). False in bytes.
+    decimals : int = 2, # Number of decimals in the output
+    ):
+    assert os.path.isfile(file_path)
+    fsize = os.path.getsize(file_path)
+    if return_str:
+        return bytes2size(fsize, decimals=decimals)
+    return fsize
+
 # Cell
-def is_file(file_path):
-    return os.path.isfile(file_path)
+def is_file(path):
+    return os.path.isfile(path)
+
+def is_dir(path):
+    return os.path.isdir(path)
 
 # Cell
 def delete_all_in_dir(tgt_dir, exception=None):
+    import shutil
     if exception is not None and len(L(exception)) > 1: exception = tuple(exception)
     for file in os.listdir(tgt_dir):
         if exception is not None and file.endswith(exception): continue
@@ -249,7 +296,6 @@ def test_error(error, f, *args, **kwargs):
     except Exception as e:
         test_eq(str(e), error)
 
-
 def test_eq_nan(a,b):
     "`test` that `a==b` excluding nan values (valid for torch.Tensor and np.ndarray)"
     mask_a = torch.isnan(a) if isinstance(a, torch.Tensor) else np.isnan(a)
@@ -288,9 +334,54 @@ def stack(o, axis=0, retain=True):
 
 def stack_pad(o, padding_value=np.nan):
     'Converts a an iterable into a numpy array using padding if necessary'
+    if not is_listy(o) or not is_array(o):
+        if not hasattr(o, "ndim"): o = np.asarray([o])
+        else: o = np.asarray(o)
+    o_ndim = 1
+    if o.ndim > 1:
+        o_ndim = o.ndim
+        o_shape = o.shape
+        o = o.flatten()
+    o = [oi if (is_array(oi) and oi.ndim > 0) or is_listy(oi) else [oi] for oi in o]
     row_length = len(max(o, key=len))
     result = np.full((len(o), row_length), padding_value)
-    for i,row in enumerate(o): result[i, :len(row)] = row
+    for i,row in enumerate(o):
+        result[i, :len(row)] = row
+    if o_ndim > 1:
+        if row_length == 1:
+            result = result.reshape(*o_shape)
+        else:
+            result = result.reshape(*o_shape, row_length)
+    return result
+
+# Cell
+def pad_sequences(
+    o, # Iterable object
+    maxlen:int=None, # Optional max length of the output. If None, max length of the longest individual sequence.
+    dtype:(str, type)=np.float64, # Type of the output sequences. To pad sequences with variable length strings, you can use object.
+    padding:str='pre', # 'pre' or 'post' pad either before or after each sequence.
+    truncating:str='pre', # 'pre' or 'post' remove values from sequences larger than maxlen, either at the beginning or at the end of the sequences.
+    padding_value:float=np.nan, # Value used for padding.
+):
+    "Transforms an iterable with sequences into a 3d numpy array using padding or truncating sequences if necessary"
+
+    assert padding in ['pre', 'post']
+    assert truncating in ['pre', 'post']
+    assert is_iter(o)
+
+    if not is_array(o):
+        o = [to2darray(oi) for oi in o]
+    seq_len = maxlen or max(o, key=len).shape[-1]
+    result = np.full((len(o), o[0].shape[-2], seq_len), padding_value, dtype=dtype)
+    for i,values in enumerate(o):
+        if truncating == 'pre':
+            values = values[..., -seq_len:]
+        else:
+            values = values[..., :seq_len]
+        if padding == 'pre':
+            result[i, :, -values.shape[-1]:] = values
+        else:
+            result[i, :, :values.shape[-1]] = values
     return result
 
 # Cell
@@ -300,22 +391,31 @@ def match_seq_len(*arrays):
 
 # Cell
 def random_shuffle(o, random_state=None):
+    import sklearn
     res = sklearn.utils.shuffle(o, random_state=random_state)
     if isinstance(o, L): return L(list(res))
     return res
 
 # Cell
 def cat2int(o):
+    from fastai.data.transforms import Categorize
+    from fastai.data.core import TfmdLists
     cat = Categorize()
     cat.setup(o)
     return stack(TfmdLists(o, cat)[:])
 
 # Cell
-def cycle_dl(dl):
-    for _ in dl: _
+def cycle_dl(dl, show_progress_bar=False):
+    if show_progress_bar:
+        for _ in progress_bar(dl): _
+    else:
+        for _ in dl: _
 
-def cycle_dl_to_device(dl):
-    for bs in dl: [b.to(default_device()) for b in bs]
+def cycle_dl_to_device(dl, show_progress_bar=False):
+    if show_progress_bar:
+        for bs in progress_bar(dl): [b.to(default_device()) for b in bs]
+    else:
+        for bs in dl: [b.to(default_device()) for b in bs]
 
 def cycle_dl_estimate(dl, iters=10):
     iters = min(iters, len(dl))
@@ -342,6 +442,7 @@ cache_memmap = cache_data
 
 # Cell
 def get_func_defaults(f):
+    import inspect
     fa = inspect.getfullargspec(f)
     if fa.defaults is None: return dict(zip(fa.args, [''] * (len(fa.args))))
     else: return dict(zip(fa.args, [''] * (len(fa.args) - len(fa.defaults)) + list(fa.defaults)))
@@ -377,8 +478,32 @@ def display_pd_df(df, max_rows:Union[bool, int]=False, max_columns:Union[bool, i
 # Cell
 def ttest(data1, data2, equal_var=False):
     "Calculates t-statistic and p-value based on 2 sample distributions"
-    t_stat, p_value = scipy.stats.ttest_ind(data1, data2, equal_var=equal_var)
+    t_stat, p_value = ttest_ind(data1, data2, equal_var=equal_var)
     return t_stat, np.sign(t_stat) * p_value
+
+def kstest(data1, data2, alternative='two-sided', mode='auto', by_axis=None):
+    """Performs the two-sample Kolmogorov-Smirnov test for goodness of fit.
+
+    Parameters
+    data1, data2: Two arrays of sample observations assumed to be drawn from a continuous distributions. Sample sizes can be different.
+    alternative: {‘two-sided’, ‘less’, ‘greater’}, optional. Defines the null and alternative hypotheses. Default is ‘two-sided’.
+    mode: {‘auto’, ‘exact’, ‘asymp’}, optional. Defines the method used for calculating the p-value.
+    by_axis (optional, int): for arrays with more than 1 dimension, the test will be run for each variable in that axis if by_axis is not None.
+    """
+    if by_axis is None:
+        stat, p_value = ks_2samp(data1.flatten(), data2.flatten(), alternative=alternative, mode=mode)
+        return stat, np.sign(stat) * p_value
+    else:
+        assert data1.shape[by_axis] == data2.shape[by_axis], f"both arrays must have the same size along axis {by_axis}"
+        stats, p_values = [], []
+        for i in range(data1.shape[by_axis]):
+            d1 = np.take(data1, indices=i, axis=by_axis)
+            d2 = np.take(data2, indices=i, axis=by_axis)
+            stat, p_value = ks_2samp(d1.flatten(), d2.flatten(), alternative=alternative, mode=mode)
+            stats.append(stat)
+            p_values.append(np.sign(stat) * p_value)
+        return stats, p_values
+
 
 def tscore(o):
     if o.std() == 0: return 0
@@ -396,8 +521,6 @@ def ttest_tensor(a, b):
     return t_stat
 
 # Cell
-from scipy.stats import pearsonr, spearmanr
-
 def pcc(a, b):
     return pearsonr(a, b)[0]
 
@@ -485,7 +608,7 @@ def fig2buf(fig):
 
 # Cell
 def plot_scatter(x, y, deg=1):
-    linreg = sp.stats.linregress(x, y)
+    linreg = linregress(x, y)
     plt.scatter(x, y, label=f'R2:{linreg.rvalue:.2f}', color='lime', edgecolor='black', alpha=.5)
     plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, deg))(np.unique(x)), color='r')
     plt.legend(loc='best')
@@ -503,6 +626,10 @@ def apply_cmap(o, cmap):
 
 # Cell
 def torch_tile(a, n_tile, dim=0):
+    if ismin_torch("1.10") and dim == 0:
+        if isinstance(n_tile, tuple):
+            return torch.tile(a, n_tile)
+        return torch.tile(a, (n_tile,))
     init_dim = a.size(dim)
     repeat_idx = [1] * a.dim()
     repeat_idx[dim] = n_tile
@@ -529,37 +656,31 @@ def to_tsfresh_df(ts):
     return df
 
 # Cell
-from scipy.stats import skew, kurtosis
-
 def pcorr(a, b):
-    return scipy.stats.pearsonr(a, b)
+    return pearsonr(a, b)
 
 def scorr(a, b):
-    corr = scipy.stats.spearmanr(a, b)
+    corr = spearmanr(a, b)
     return corr[0], corr[1]
 
 # Cell
-def torch_diff(t, lag=1, pad=True):
+def torch_diff(t, lag=1, pad=True, append=0):
     import torch.nn.functional as F
     diff = t[..., lag:] - t[..., :-lag]
-    if pad: return F.pad(diff, (lag,0))
-    else: return diff
+    if pad:
+        return F.pad(diff, (lag, append))
+    else:
+        return diff
 
 # Cell
-def get_outliers_IQR(o, axis=None):
-    tt = False
+def get_outliers_IQR(o, axis=None, quantile_range=(25.0, 75.0)):
     if isinstance(o, torch.Tensor):
-        tt = True
-        device = o.device
-        tdtype = o.dtype
-        o = o.detach().cpu().numpy()
-    Q1 = np.nanpercentile(o, 25, axis=axis, keepdims=axis is not None)
-    Q3 = np.nanpercentile(o, 75, axis=axis, keepdims=axis is not None)
+        Q1 = torch.nanquantile(o, quantile_range[0]/100, axis=axis, keepdims=axis is not None)
+        Q3 = torch.nanquantile(o, quantile_range[1]/100, axis=axis, keepdims=axis is not None)
+    else:
+        Q1 = np.nanpercentile(o, quantile_range[0], axis=axis, keepdims=axis is not None)
+        Q3 = np.nanpercentile(o, quantile_range[1], axis=axis, keepdims=axis is not None)
     IQR = Q3 - Q1
-    if tt:
-        Q1 = torch.tensor(Q1, dtype=tdtype, device=device)
-        Q3 = torch.tensor(Q3, dtype=tdtype, device=device)
-        IQR = torch.tensor(IQR, dtype=tdtype, device=device)
     return Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
 
 def clip_outliers(o, axis=None):
@@ -570,14 +691,32 @@ def clip_outliers(o, axis=None):
         return torch.clamp(o, min_outliers, max_outliers)
 
 def get_percentile(o, percentile, axis=None):
-    if isinstance(o, torch.Tensor): o = o.detach().cpu().numpy()
-    return np.nanpercentile(o, percentile, axis=axis, keepdims=axis is not None)
+    if isinstance(o, torch.Tensor):
+        return torch.nanquantile(o, percentile/100, axis=axis, keepdims=axis is not None)
+    else:
+        return np.nanpercentile(o, percentile, axis=axis, keepdims=axis is not None)
 
 def torch_clamp(o, min=None, max=None):
     r"""Clamp torch.Tensor using 1 or multiple dimensions"""
     if min is not None: o = torch.max(o, min)
     if max is not None: o = torch.min(o, max)
     return o
+
+# Cell
+def get_robustscale_params(o, by_var=True, percentiles=(25, 75), eps=1e-6):
+    assert o.ndim == 3
+    if by_var:
+        median = np.nanpercentile(o, 50, axis=(0,2), keepdims=True)
+        Q1 = np.nanpercentile(o, percentiles[0], axis=(0,2), keepdims=True)
+        Q3 = np.nanpercentile(o, percentiles[1], axis=(0,2), keepdims=True)
+        IQR = Q3 - Q1
+    else:
+        median = np.nanpercentile(o, .50)
+        Q1 = np.nanpercentile(o, percentiles[0])
+        Q3 = np.nanpercentile(o, percentiles[1])
+        IQR = Q3 - Q1
+    if eps is not None: IQR = np.maximum(IQR, eps)
+    return median, IQR
 
 # Cell
 def torch_slice_by_dim(t, index, dim=-1, **kwargs):
@@ -673,7 +812,7 @@ def roll2d(o, roll1: Union[None, list, int] = None, roll2: Union[None, list, int
     if roll1 is not None:
         if isinstance(roll1, int): axis1 = axis1 - np.array(roll1).reshape(1,1)
         else: axis1 = np.array(roll1).reshape(o.shape[0],1)
-    if roll2:
+    if roll2 is not None:
         if isinstance(roll2, int):  axis2 = axis2 - np.array(roll2).reshape(1,1)
         else: axis2 = np.array(roll2).reshape(1,o.shape[1])
     return o[axis1, axis2]
@@ -689,16 +828,16 @@ def roll3d(o, roll1: Union[None, list, int] = None, roll2: Union[None, list, int
     if roll1 is not None:
         if isinstance(roll1, int): axis1 = axis1 - np.array(roll1).reshape(1,1,1)
         else: axis1 = np.array(roll1).reshape(o.shape[0],1,1)
-    if roll2:
+    if roll2 is not None:
         if isinstance(roll2, int):  axis2 = axis2 - np.array(roll2).reshape(1,1,1)
         else: axis2 = np.array(roll2).reshape(1,o.shape[1],1)
-    if roll3:
+    if roll3 is not None:
         if isinstance(roll3, int):  axis3 = axis3 - np.array(roll3).reshape(1,1,1)
         else: axis3 = np.array(roll3).reshape(1,1,o.shape[2])
     return o[axis1, axis2, axis3]
 
 
-def random_roll2d(o, axis=()):
+def random_roll2d(o, axis=(), replace=False):
     """Rolls a 2D object on the indicated axis
     This solution is based on https://stackoverflow.com/questions/20360675/roll-rows-of-a-matrix-independently
     """
@@ -742,7 +881,7 @@ def chunks_calculator(shape, dtype='float32', n_bytes=1024**3):
     It guarantees > 50% of the chunk will be filled"""
 
     X  = np.random.rand(1, *shape[1:]).astype(dtype)
-    byts = get_size(X)
+    byts = get_size(X, return_str=False)
     n = n_bytes // byts
     if shape[0] / n <= 1: return False
     remainder = shape[0] % n
@@ -890,6 +1029,8 @@ def torch_flip(t, dims=-1):
 
 # Cell
 def torch_nan_to_num(o, num=0, inplace=False):
+    if ismin_torch("1.8") and not inplace:
+        return torch.nan_to_num(o, num)
     mask = torch.isnan(o)
     return torch_masked_to_num(o, mask, num=num, inplace=inplace)
 
@@ -928,7 +1069,7 @@ def sincos_encoding(seq_len, device=None, to_np=False):
         sin = np.sin(np.arange(seq_len) / seq_len * 2 * np.pi)
         cos = np.cos(np.arange(seq_len) / seq_len * 2 * np.pi)
     else:
-        device = default_device()
+        if device is None: device = default_device()
         sin = torch.sin(torch.arange(seq_len, device=device) / seq_len * 2 * np.pi)
         cos = torch.cos(torch.arange(seq_len, device=device) / seq_len * 2 * np.pi)
     return sin, cos
@@ -938,7 +1079,7 @@ def linear_encoding(seq_len, device=None, to_np=False, lin_range=(-1,1)):
     if to_np:
         enc =  np.linspace(lin_range[0], lin_range[1], seq_len)
     else:
-        device = default_device()
+        if device is None: device = default_device()
         enc = torch.linspace(lin_range[0], lin_range[1], seq_len, device=device)
     return enc
 
@@ -983,6 +1124,7 @@ def create_dir(directory, verbose=True):
 
 
 def remove_dir(directory, verbose=True):
+    import shutil
     if not is_listy(directory): directory = [directory]
     for d in directory:
         d = Path(d)
@@ -1008,6 +1150,205 @@ class named_partial(object):
 
 # Cell
 def yaml2dict(fname):
+    import yaml
     with maybe_open(fname, 'r') as f:
         dictionary = yaml.safe_load(f)
     return AttrDict(dictionary)
+
+# Cell
+def str2list(o):
+    if o is None: return []
+    elif o is not None and not isinstance(o, (list, L)):
+        if isinstance(o, pd.core.indexes.base.Index): o = o.tolist()
+        else: o = [o]
+    return o
+
+def str2index(o):
+    if o is None: return o
+    o = str2list(o)
+    if len(o) == 1: return o[0]
+    return o
+
+def get_cont_cols(df):
+    return df._get_numeric_data().columns.tolist()
+
+def get_cat_cols(df):
+    cols = df.columns.tolist()
+    cont_cols = df._get_numeric_data().columns.tolist()
+    return [col for col in cols if col not in cont_cols]
+
+# Cell
+alphabet = L(list(string.ascii_lowercase))
+ALPHABET = L(list(string.ascii_uppercase))
+
+# Cell
+def get_mapping(arr, dim=1, return_counts=False):
+    maps = [L(np.unique(np.take(arr, i, dim)).tolist()) for i in range(arr.shape[dim])]
+    if return_counts:
+        counts = [len(m) for m in maps]
+        return maps, counts
+    return maps
+
+def map_array(arr, dim=1):
+    out = stack([np.unique(np.take(arr, i, dim), return_inverse=True)[1] for i in range(arr.shape[dim])])
+    if dim == 1: out = out.T
+    return out
+
+# Cell
+def log_tfm(o, inplace=False):
+    "Log transforms an array-like object with positive and/or negative values"
+    if isinstance(o, torch.Tensor):
+        pos_o = torch.log1p(o[o > 0])
+        neg_o = -torch.log1p(torch.abs(o[o < 0]))
+    else:
+        pos_o = np.log1p(o[o > 0])
+        neg_o = -np.log1p(np.abs(o[o < 0]))
+    if inplace:
+        o[o > 0] = pos_o
+        o[o < 0] = neg_o
+        return o
+    else:
+        if hasattr(o, "clone"): output = o.clone()
+        elif hasattr(o, "copy"): output = o.copy()
+        output[output > 0] = pos_o
+        output[output < 0] = neg_o
+        return output
+
+# Cell
+def to_sincos_time(arr, max_value):
+    sin = np.sin(arr / max_value * 2 * np.pi)
+    cos = np.cos(arr / max_value * 2 * np.pi)
+    return sin, cos
+
+# Cell
+def plot_feature_dist(X, percentiles=[0,0.1,0.5,1,5,10,25,50,75,90,95,99,99.5,99.9,100]):
+    for i in range(X.shape[1]):
+        ys = []
+        for p in percentiles:
+            ys.append(np.percentile(X[:, i].flatten(), p))
+        plt.plot(percentiles, ys)
+        plt.xticks(percentiles, rotation='vertical')
+        plt.grid(color='gainsboro', linewidth=.5)
+        plt.title(f"var_{i}")
+        plt.show()
+
+# Cell
+def rolling_moving_average(o, window=2):
+    if isinstance(o, torch.Tensor):
+        cunsum = torch.cumsum(o, axis=-1) # nancumsum not available (can't be used with missing data!)
+        lag_cunsum = torch.cat([torch.zeros((o.shape[0], o.shape[1], window), device=o.device), torch.cumsum(o[..., :-window], axis=-1)], -1)
+        count = torch.clip(torch.ones_like(o).cumsum(-1), max=window)
+        return (cunsum - lag_cunsum) / count
+    else:
+        cunsum = np.nancumsum(o, axis=-1)
+        lag_cunsum = np.concatenate([np.zeros((o.shape[0], o.shape[1], window)), np.nancumsum(o[..., :-window], axis=-1)], -1)
+        count = np.minimum(np.ones_like(o).cumsum(-1), window)
+        return (cunsum - lag_cunsum) / count
+
+# Cell
+def ffill_sequence(o):
+    """Forward fills an array-like object alongside sequence dimension"""
+    if isinstance(o, torch.Tensor):
+        mask = torch.isnan(o)
+        idx = torch.where(~mask, torch.arange(mask.shape[-1], device=o.device), 0)
+        idx = torch.cummax(idx, dim=-1).values
+        return o[torch.arange(o.shape[0], device=o.device)[:,None,None], torch.arange(o.shape[1], device=o.device)[None,:,None], idx]
+    else:
+        mask = np.isnan(o)
+        idx = np.where(~mask, np.arange(mask.shape[-1]), 0)
+        idx = np.maximum.accumulate(idx, axis=-1)
+        return o[np.arange(o.shape[0])[:,None,None], np.arange(o.shape[1])[None,:,None], idx]
+
+def bfill_sequence(o):
+    """Backward fills an array-like object alongside sequence dimension"""
+    if isinstance(o, torch.Tensor):
+        o = torch.flip(o, (-1,))
+        o = ffill_sequence(o)
+        return torch.flip(o, (-1,))
+    else:
+        o = o[..., ::-1]
+        o = ffill_sequence(o)
+        return o[..., ::-1]
+
+def fbfill_sequence(o):
+    """Forward and backward fills an array-like object alongside sequence dimension"""
+    o = ffill_sequence(o)
+    o = bfill_sequence(o)
+    return o
+
+# Cell
+def dummify(o:Union[np.ndarray, torch.Tensor], by_var:bool=True, inplace:bool=False, skip:Optional[list]=None, random_state=None):
+    """Shuffles an array-like object along all dimensions or dimension 1 (variables) if by_var is True."""
+    if not inplace:
+        if isinstance(o, np.ndarray): o_dummy = o.copy()
+        elif isinstance(o, torch.Tensor): o_dummy = o.clone()
+    else: o_dummy = o
+    if by_var:
+        for k in progress_bar(range(o.shape[1]), leave=False):
+            if skip is not None and k in listify(skip): continue
+            o_dummy[:, k] = random_shuffle(o[:, k].flatten(), random_state=random_state).reshape(o[:, k].shape)
+    else:
+        o_dummy[:] = random_shuffle(o.flatten(), random_state=random_state).reshape(o.shape)
+    if not inplace:
+        return o_dummy
+
+# Cell
+def shuffle_along_axis(o, axis=-1, random_state=None):
+    if isinstance(o, torch.Tensor): size = o.numel()
+    else: size = np.size(o)
+    for ax in listify(axis):
+        idx = random_shuffle(np.arange(size), random_state=random_state).reshape(*o.shape).argsort(axis=ax)
+        o = np.take_along_axis(o, idx, axis=ax)
+    return o
+
+# Cell
+def analyze_feature(feature, bins=100, density=False, feature_name=None, clip_outliers_plot=False, quantile_range=(25.0, 75.0),
+           percentiles=[1, 25, 50, 75, 99], text_len=12, figsize=(10,6)):
+    non_nan_feature = feature[~np.isnan(feature)]
+    nan_perc = np.isnan(feature).mean()
+    print(f"{'dtype':>{text_len}}: {feature.dtype}")
+    print(f"{'nan values':>{text_len}}: {nan_perc:.1%}")
+    print(f"{'max':>{text_len}}: {np.nanmax(feature)}")
+    for p in percentiles:
+        print(f"{p:>{text_len}.0f}: {get_percentile(feature, p)}")
+    print(f"{'min':>{text_len}}: {np.nanmin(feature)}")
+    min_outliers, max_outliers = get_outliers_IQR(feature, quantile_range=quantile_range)
+    print(f"{'outlier min':>{text_len}}: {min_outliers}")
+    print(f"{'outlier max':>{text_len}}: {max_outliers}")
+    print(f"{'outliers':>{text_len}}: {((non_nan_feature < min_outliers) | (non_nan_feature > max_outliers)).mean():.1%}")
+    print(f"{'mean':>{text_len}}: {np.nanmean(feature)}")
+    print(f"{'std':>{text_len}}: {np.nanstd(feature)}")
+    print(f"{'normal dist':>{text_len}}: {normaltest(non_nan_feature, axis=0, nan_policy='propagate')[1] > .05}")
+    plt.figure(figsize=figsize)
+    if clip_outliers_plot:
+        plt.hist(np.clip(non_nan_feature, min_outliers, max_outliers), bins, density=density, color='lime', edgecolor='black')
+    else:
+        plt.hist(non_nan_feature, bins, density=density, color='lime', edgecolor='black')
+    plt.axvline(min_outliers, lw=1, ls='--', color='red')
+    plt.axvline(max_outliers, lw=1, ls='--', color='red')
+    plt.title(f"feature: {feature_name}")
+    plt.show()
+
+def analyze_array(o, bins=100, density=False, feature_names=None, clip_outliers_plot=False, quantile_range=(25.0, 75.0),
+           percentiles=[1, 25, 50, 75, 99], text_len=12, figsize=(10,6)):
+    if percentiles:
+        percentiles = np.sort(percentiles)[::-1]
+    print(f"{'array shape':>{text_len}}: {o.shape}")
+    if o.ndim > 1:
+        for f in range(o.shape[1]):
+            feature_name = f"{feature_names[f]}" if feature_names is not None else f
+            print(f"\n{f:3} {'feature':>{text_len - 4}}: {feature_name}\n")
+            analyze_feature(o[:, f].flatten(), feature_name=feature_name)
+    else:
+        analyze_feature(o.flatten(), feature_name=feature_names)
+
+# Cell
+def get_relpath(path):
+    current_path = os.getcwd()
+    if is_listy(path):
+        relpaths = []
+        for p in path:
+            relpaths.append(os.path.relpath(p, current_path))
+        return relpaths
+    else:
+        return os.path.relpath(path, current_path)
